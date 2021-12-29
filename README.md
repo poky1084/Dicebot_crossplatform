@@ -15,7 +15,7 @@ Made by poky1084
 
 Discord: `0000000#7073`
 
-
+#
 Alternatively, if does not work, can install Java on any system and using command: `java -jar init.jar`
 to start the Dice bot
 

@@ -1,7 +1,7 @@
 # Dicebot-crossplatform-
 A crossplatfrom dicebot for Stake with Lua only scripts.
 
-Pro Dice beta release
+Pro Dice beta release ![GitHub all releases](https://img.shields.io/github/downloads/poky1084/Dicebot-crossplatform-/total)
 
 #
 Lua scripts working

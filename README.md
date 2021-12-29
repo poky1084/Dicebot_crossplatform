@@ -28,4 +28,4 @@ Java (JRE) can be downloaded here:
 https://www.java.com/en/download/manual.jsp
 
 #
-The sourcecode was build with Netbeans IDE 12.6
+The sourcecode was build with Netbeans IDE 12.6 with jdk1.8.0_311 (32 bit)

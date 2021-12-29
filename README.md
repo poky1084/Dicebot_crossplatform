@@ -4,7 +4,7 @@ A crossplatfrom dicebot for Stake with Lua only scripts. (python script support 
 # Dicebot beta release ![GitHub all releases](https://img.shields.io/github/downloads/poky1084/Dicebot_crossplatform/Dicebot-beta/total)
 
 #
-- Lua scripts works.
+- Lua scripts work.
 - Only some Lua functions available yet. stop(), resetstats()
 - All Lua variables listed in Settings> INFO
 

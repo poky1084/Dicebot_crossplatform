@@ -1108,9 +1108,11 @@ public class main extends javax.swing.JFrame {
                  System.out.println("Please set a vaild number for rows");
                  running = false;
             }
+            SetLuaVariables();
             String script = jEditorLua.getText();
             try {
                 global_var.load(script).call();
+                
 
             } catch(Exception e) {
                 System.out.println(e);
@@ -1326,11 +1328,12 @@ public class main extends javax.swing.JFrame {
                     double payoutMultiplier = parseDouble(diceRoll.getString("payoutMultiplier"));
                     String current_currency = diceRoll.getString("currency");
                     String current_income = "";
+                    bets++;
                     if(payoutMultiplier == 0){
                         win = false;
                         winstreak = 0;
-                        losestreak += 1;
-                        var_losses += 1;
+                        losestreak++;
+                        var_losses++;
                         maxlosestreak.add(losestreak);
                         Integer maxlosses = Collections.max(maxlosestreak);
                         maxlosestreak.clear();
@@ -1342,13 +1345,13 @@ public class main extends javax.swing.JFrame {
                         colouringTable.setColors(redColor);
                     } else {
                         win = true;
-                        winstreak += 1;
+                        winstreak++;
                         losestreak = 0;
                         maxwinstreak.add(winstreak);
                         Integer maxwin = Collections.max(maxwinstreak);
                         maxwinstreak.clear();
                         maxwinstreak.add(maxwin);
-                        var_wins += 1;
+                        var_wins++;
                         profit += payout - amount;
                         var_currentprofit = payout - amount;
                         current_income = "+" + format8.format(payout - amount);
@@ -1374,7 +1377,7 @@ public class main extends javax.swing.JFrame {
                     var_wagered += amount;
                     var_previousbet = amount;
                     lastBet.Roll = current_result;
-                    bets = var_wins + var_losses;
+
                     labelTotalProfit.setText(format8.format(profit));
                     Integer totalbet = var_wins + var_losses;
                     labelTotalBets.setText(totalbet.toString());
@@ -1389,14 +1392,14 @@ public class main extends javax.swing.JFrame {
 
                     Integer speedepos = final_epos - start_epos;
                     jLabel1.setText("Status: " + format1.format(1000 / speedepos) + " bets/sec");
-
+                    
                     if (jEnableLuaCheck.isSelected() == Boolean.TRUE){
                         SetLuaVariables();
                         DoBet();
                         //GetLuaVariables();
                     }
                    
-
+                    
                     series.add(bets, profit);
                     //String log_text = bets + "." + current_game + " | profit: " + format8.format(profit) + " | " + current_income + " | amount: " + format8.format(amount) + " " + current_currency + " | payoutMultiplier: " + format4.format(payoutMultiplier) + " | payout: " + format8.format(payout) + " | result: " + format2.format(current_result) + " '" + current_condition + "' " + format2.format(current_target) + " | user: " + username + ".";
                     AddRow(bets + "." + current_game, format8.format(profit), current_income, format8.format(amount) + " " + current_currency, format4.format(payoutMultiplier), format8.format(payout), format2.format(current_result), current_condition, format2.format(current_target), username, updated);

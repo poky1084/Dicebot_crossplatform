@@ -11,7 +11,7 @@ All Lua variables listed in Settings> INFO
 Bot only runs if Lua is enabled.
 
 #
-Made by poky1084
+`Made by poky1084`
 Discord: `0000000#7073`
 
 

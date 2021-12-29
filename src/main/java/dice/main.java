@@ -6,7 +6,7 @@ package dice;
 
 
 import org.luaj.vm2.*;
-import java.util.*;
+
 import javax.swing.table.*;
 import java.awt.Color;
 import java.awt.Component;
@@ -52,6 +52,10 @@ import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 import java.nio.charset.StandardCharsets;
 import java.io.OutputStream;
 import static java.lang.Math.floor;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.luaj.vm2.lib.ZeroArgFunction;
 
 /**
@@ -1100,7 +1104,7 @@ public class main extends javax.swing.JFrame {
             //betamount = parseDouble(jTextField1.getText());
             apikey = jPasswordField1.getText();
             var_currency = jComboBox1.getSelectedItem().toString();
-            global_var.set("currency", var_currency);
+            
             startDate = (int) System.currentTimeMillis();
             try {
                  rowCountTable = Integer.parseInt(jTextField2.getText());// output = 25
@@ -1108,6 +1112,7 @@ public class main extends javax.swing.JFrame {
                  System.out.println("Please set a vaild number for rows");
                  running = false;
             }
+            global_var.set("currency", var_currency);
             SetLuaVariables();
             String script = jEditorLua.getText();
             try {
@@ -1273,14 +1278,15 @@ public class main extends javax.swing.JFrame {
 
     public void diceBet(){
         
-        if (jEnableLuaCheck.isSelected() == Boolean.TRUE){
-                GetLuaVariables();
-        }
-        setTarget(var_chance, var_bethigh);
         
-        if(running == true)
-        {
-            try {
+        
+
+        GetLuaVariables();
+        setTarget(var_chance, var_bethigh);
+        try {
+            if(running == true)
+            {
+
                 JSONObject vars = new JSONObject();
                 vars.put("currency", var_currency);
                 vars.put("amount", betamount);
@@ -1291,14 +1297,15 @@ public class main extends javax.swing.JFrame {
                 query.put("operationName", "DiceRoll");
                 query.put("variables", vars);
                 query.put("query", "mutation DiceRoll($amount: Float!, $target: Float!, $condition: CasinoGameDiceConditionEnum!, $currency: CurrencyEnum!, $identifier: String!) {\n  diceRoll(amount: $amount, target: $target, condition: $condition, currency: $currency, identifier: $identifier) {\n    ...CasinoBetFragment\n    state {\n      ...DiceStateFragment\n      __typename\n    }\n    __typename\n  }\n}\n\nfragment CasinoBetFragment on CasinoBet {\n  id\n  active\n  payoutMultiplier\n  amountMultiplier\n  amount\n  payout\n  updatedAt\n  currency\n  game\n  user {\n    id\n    name\n    __typename\n  }\n  __typename\n}\n\nfragment DiceStateFragment on CasinoGameDice {\n  result\n  target\n  condition\n  __typename\n}\n");
-                
+
                 start_epos = (int) System.currentTimeMillis();
                 String response =  Utility.excutePost("https://api." + sitemirror + "/graphql", query.toString(), apikey);
                 final_epos = (int) System.currentTimeMillis();                
-
+                //System.out.println(response);
                 //JsonObject data = new JsonParser().parse(response).getAsJsonObject();
                 JSONObject json = new JSONObject(response);
                 if (json.has("errors")){
+
                     JSONArray errors = json.getJSONArray("errors");
                     JSONObject rec = errors.getJSONObject(0);
                     String errmessage = rec.getString("message");
@@ -1307,9 +1314,10 @@ public class main extends javax.swing.JFrame {
                     if(errorType.equals("insufficientBalance")  || errorType.equals("invalidSession") || errorType.equals("notAuthenticated") || errorType.equals("insignificantBet")){
                         running = false;
                     }
+
                 } else {
-                    
-                    
+
+
 
 
 
@@ -1327,6 +1335,7 @@ public class main extends javax.swing.JFrame {
                     double amount = parseDouble(diceRoll.getString("amount"));
                     double payoutMultiplier = parseDouble(diceRoll.getString("payoutMultiplier"));
                     String current_currency = diceRoll.getString("currency");
+
                     String current_income = "";
                     bets++;
                     if(payoutMultiplier == 0){
@@ -1335,9 +1344,9 @@ public class main extends javax.swing.JFrame {
                         losestreak++;
                         var_losses++;
                         maxlosestreak.add(losestreak);
-                        Integer maxlosses = Collections.max(maxlosestreak);
-                        maxlosestreak.clear();
-                        maxlosestreak.add(maxlosses);
+                        maxlosestreak.add(0);
+                        //Integer maxlosses = Collections.max(maxlosestreak);
+                        //maxlosestreak.add(maxlosses);
                         profit -= amount;
                         var_currentprofit = -amount;
                         current_income = "-" + format8.format(amount);
@@ -1348,9 +1357,9 @@ public class main extends javax.swing.JFrame {
                         winstreak++;
                         losestreak = 0;
                         maxwinstreak.add(winstreak);
-                        Integer maxwin = Collections.max(maxwinstreak);
-                        maxwinstreak.clear();
-                        maxwinstreak.add(maxwin);
+                        maxwinstreak.add(0);
+                        //Integer maxwin = Collections.max(maxwinstreak);
+                        //maxwinstreak.add(maxwin);
                         var_wins++;
                         profit += payout - amount;
                         var_currentprofit = payout - amount;
@@ -1367,13 +1376,11 @@ public class main extends javax.swing.JFrame {
                         labelCurrentStreak.setForeground(Color.green);
                         var_currentstreak = winstreak;
                     }
-
+                    maxhighestbet.add(0.000000);
                     maxhighestbet.add(amount);
-                    Double maxbet = Collections.max(maxhighestbet);
-                    maxhighestbet.clear();
-                    maxhighestbet.add(maxbet);
-
                     
+
+
                     var_wagered += amount;
                     var_previousbet = amount;
                     lastBet.Roll = current_result;
@@ -1385,21 +1392,38 @@ public class main extends javax.swing.JFrame {
                     labelTotalLosses.setText(var_losses.toString());
 
                     labelTotalWagered.setText(format8.format(var_wagered));
-                    labelBestWinstreak.setText(Collections.max(maxwinstreak).toString());
-                    labelWorstLosestreak.setText(Collections.max(maxlosestreak).toString());
-                    labelHighestBet.setText(format8.format(Collections.max(maxhighestbet)));
+                    try {
+                        labelBestWinstreak.setText(Collections.max(maxwinstreak).toString());
+                        labelWorstLosestreak.setText(Collections.max(maxlosestreak).toString());
+                        labelHighestBet.setText(format8.format(Collections.max(maxhighestbet)));
+                        Double maxbet = Collections.max(maxhighestbet);
+                        Integer maxloss = Collections.max(maxlosestreak);
+                        Integer maxwins = Collections.max(maxwinstreak);
+                        maxhighestbet.clear();
+                        maxwinstreak.clear();
+                        maxlosestreak.clear();
+
+                        maxhighestbet.add(maxbet);
+                        maxwinstreak.add(maxwins);
+                        maxlosestreak.add(maxloss);
+                    } catch (Exception e) {
+                        //System.out.println(e);
+                    }
+                    //System.out.println(maxwinstreak);
+                    //System.out.println(maxlosestreak);
+                    //System.out.println(maxhighestbet);
                     labelTimeRunning.setText(TotalRunning());
 
                     Integer speedepos = final_epos - start_epos;
                     jLabel1.setText("Status: " + format1.format(1000 / speedepos) + " bets/sec");
-                    
-                    if (jEnableLuaCheck.isSelected() == Boolean.TRUE){
-                        SetLuaVariables();
-                        DoBet();
+
+
+                    SetLuaVariables();
+                    DoBet();
                         //GetLuaVariables();
-                    }
-                   
-                    
+
+
+
                     series.add(bets, profit);
                     //String log_text = bets + "." + current_game + " | profit: " + format8.format(profit) + " | " + current_income + " | amount: " + format8.format(amount) + " " + current_currency + " | payoutMultiplier: " + format4.format(payoutMultiplier) + " | payout: " + format8.format(payout) + " | result: " + format2.format(current_result) + " '" + current_condition + "' " + format2.format(current_target) + " | user: " + username + ".";
                     AddRow(bets + "." + current_game, format8.format(profit), current_income, format8.format(amount) + " " + current_currency, format4.format(payoutMultiplier), format8.format(payout), format2.format(current_result), current_condition, format2.format(current_target), username, updated);
@@ -1407,11 +1431,12 @@ public class main extends javax.swing.JFrame {
                         jTable3.getColumnModel().getColumn(i).setCellRenderer(colouringTable);
                     }
                 }
-            } catch (Exception e) {
-            
+                jConsole.setCaretPosition(jConsole.getDocument().getLength());
             }
-            jConsole.setCaretPosition(jConsole.getDocument().getLength());
+        } catch (Exception e) {
+            System.out.println(e);
         }
+
     }
     public void AddRow(String str1, String str2, String str3, String str4, String str5, String str6, String str7, String str8, String str9, String str10, String str11){
         DefaultTableModel yourModel = (DefaultTableModel) jTable3.getModel();

@@ -1292,7 +1292,7 @@ public class main extends javax.swing.JFrame {
                 vars.put("amount", betamount);
                 vars.put("target", nexttarget);   
                 vars.put("condition", condition); 
-                vars.put("identifier", getAlphaNumericString(20));          
+                vars.put("identifier", getAlphaNumericString(21));          
                 JSONObject query = new JSONObject();
                 query.put("operationName", "DiceRoll");
                 query.put("variables", vars);
@@ -1525,29 +1525,9 @@ public class main extends javax.swing.JFrame {
     // function to generate a random string of length n
     static String getAlphaNumericString(int n)
     {
-  
-        // chose a Character random from this String
-        String AlphaNumericString = "_-ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                                    + "_-0123456789"
-                                    + "_-abcdefghijklmnopqrstuvxyz";
-  
-        // create StringBuffer size of AlphaNumericString
-        StringBuilder sb = new StringBuilder(n);
-  
-        for (int i = 0; i < n; i++) {
-  
-            // generate a random number between
-            // 0 to AlphaNumericString variable length
-            int index
-                = (int)(AlphaNumericString.length()
-                        * Math.random());
-  
-            // add Character one by one in end of sb
-            sb.append(AlphaNumericString
-                          .charAt(index));
-        }
-  
-        return sb.toString();
+        String uuid = java.util.UUID.randomUUID().toString();
+        String iid = uuid.substring(0,n).replace('-','a');
+        return iid;
     }
     /**
      * @param args the command line arguments

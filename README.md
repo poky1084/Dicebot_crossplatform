@@ -11,7 +11,8 @@ All Lua variables listed in Settings> INFO
 Bot only runs if Lua is enabled.
 
 #
-`Made by poky1084`
+Made by poky1084
+
 Discord: `0000000#7073`
 
 
@@ -19,6 +20,7 @@ Alternatively, if does not work, can install Java on any system and using comman
 to start the Dice bot
 
 1.The binaries with (windows) (linux) (macos) has included Java in it. It runs standalone. (Not need Java installed)
+
 2.By downloading Dicebot(with Java installed on system).zip, you must install Java (JRE) or JDK on your operertaing system.
 
 

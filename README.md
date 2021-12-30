@@ -6,9 +6,8 @@ A crossplatfrom dicebot for Stake with Lua only scripts. (python script support 
 #
 - Lua scripts work.
 - Only some Lua functions available yet. stop(), resetstats()
-- All Lua variables listed in Settings> INFO
+- All Lua variables listed in Settings> INFO (balance var not yet avaiable)
 
-Bot only runs if Lua is enabled.
 
 ![ImageofDicebot](https://i.imgur.com/CWPTuBo.png)
 

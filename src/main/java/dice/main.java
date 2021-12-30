@@ -56,6 +56,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import javax.swing.text.BadLocationException;
+import org.jfree.data.xy.XYDataItem;
 import org.luaj.vm2.lib.ZeroArgFunction;
 
 /**
@@ -97,7 +99,8 @@ public class main extends javax.swing.JFrame {
     Integer startDate = (int) System.currentTimeMillis();
     Integer start_epos = (int) System.currentTimeMillis();
     Integer final_epos = (int) System.currentTimeMillis();   
-
+    Integer limit = 100;
+    Integer remov = 2;
     XYSeries series = new XYSeries("dataset");
     XYSeries series2 = new XYSeries("");
     DecimalFormat format8 = new DecimalFormat("0.00000000");
@@ -126,9 +129,11 @@ public class main extends javax.swing.JFrame {
     public JPanel createDemoPanel() {
 
         // create plot...
-        NumberAxis xAxis = new NumberAxis("");
-        xAxis.setAutoRangeIncludesZero(true);
+        xAxis = new NumberAxis("");
+        xAxis.setAutoRangeIncludesZero(false);
         xAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+        xAxis.setFixedAutoRange(0);
+        //xAxis.setAutoRange(true);
         //xAxis.setAutoRange(true);
         NumberAxis yAxis = new NumberAxis("");
         yAxis.setAutoRangeIncludesZero(true);
@@ -155,7 +160,7 @@ public class main extends javax.swing.JFrame {
         plot.setRangeGridlinesVisible(false);
         
         ValueMarker marker1 = new ValueMarker(0);
-        marker1.setPaint(Color.black);
+        marker1.setPaint(Color.RED);
         //marker1.setLabelFont(new Font("Dialog", Font.BOLD, 39));
         plot.addRangeMarker(marker1);
 
@@ -174,6 +179,7 @@ public class main extends javax.swing.JFrame {
 
     private XYDataset createSampleData() {;
         series.add(0, 0.00000000);
+        series.setMaximumItemCount(1000);
         XYSeriesCollection result = new XYSeriesCollection(series);
         series2.add(0, 0);
         result.addSeries(series2);
@@ -1073,7 +1079,7 @@ public class main extends javax.swing.JFrame {
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(2, 2, 2)
                 .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1020, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1152,7 +1158,7 @@ public class main extends javax.swing.JFrame {
             plaf = "com.sun.java.swing.plaf.motif.MotifLookAndFeel";
         } else if (index == 3) {
             plaf = "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel";
-        } 
+        }
         try {
             javax.swing.UIManager.setLookAndFeel(plaf);
         } catch (ClassNotFoundException ex) {
@@ -1164,7 +1170,7 @@ public class main extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        SwingUtilities.updateComponentTreeUI(this); 
+        SwingUtilities.updateComponentTreeUI(this);
         this.pack();
     }//GEN-LAST:event_jComboBox3ActionPerformed
     
@@ -1420,17 +1426,34 @@ public class main extends javax.swing.JFrame {
 
                     SetLuaVariables();
                     DoBet();
-                        //GetLuaVariables();
+                    //GetLuaVariables();
+                    
+                    
+                    if(series.getItemCount() < 1000){
+                        xAxis.setFixedAutoRange(bets);
+                    }
+  
+
+ 
+
+                    XYDataItem item = new XYDataItem(bets, profit);
+
+                    series.addOrUpdate(item);
+ 
+                    
+                   // System.out.println(series.getItems());
+                    //series.add(bets, profit);
+                    
 
 
 
-                    series.add(bets, profit);
                     //String log_text = bets + "." + current_game + " | profit: " + format8.format(profit) + " | " + current_income + " | amount: " + format8.format(amount) + " " + current_currency + " | payoutMultiplier: " + format4.format(payoutMultiplier) + " | payout: " + format8.format(payout) + " | result: " + format2.format(current_result) + " '" + current_condition + "' " + format2.format(current_target) + " | user: " + username + ".";
                     AddRow(bets + "." + current_game, format8.format(profit), current_income, format8.format(amount) + " " + current_currency, format4.format(payoutMultiplier), format8.format(payout), format2.format(current_result), current_condition, format2.format(current_target), username, updated);
                     for (int i = 0; i < jTable3.getColumnCount(); i++){
                         jTable3.getColumnModel().getColumn(i).setCellRenderer(colouringTable);
                     }
                 }
+                trunkTextArea(jConsole);
                 jConsole.setCaretPosition(jConsole.getDocument().getLength());
             }
         } catch (Exception e) {
@@ -1470,7 +1493,22 @@ public class main extends javax.swing.JFrame {
         }
     }
 
-
+    final int SCROLL_BUFFER_SIZE = 1000;
+    public void trunkTextArea(javax.swing.JTextArea txtWin)
+    {
+        int numLinesToTrunk = txtWin.getLineCount() - SCROLL_BUFFER_SIZE;
+        if(numLinesToTrunk > 0)
+        {
+            try
+            {
+                int posOfLastLineToTrunk = txtWin.getLineEndOffset(numLinesToTrunk - 1);
+                txtWin.replaceRange("",0,posOfLastLineToTrunk);
+            }
+            catch (BadLocationException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
 
     public class StopRun extends ZeroArgFunction {
         @Override
@@ -1563,6 +1601,7 @@ public class main extends javax.swing.JFrame {
             }
         });
     }
+    private NumberAxis xAxis;
     private RSyntaxTextArea jEditorLua;
     private RSyntaxTextArea jEditorPython;
     private javax.swing.JCheckBox jEnableLuaCheck;

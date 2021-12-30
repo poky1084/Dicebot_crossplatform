@@ -21,7 +21,7 @@ to start the Dice bot
 
 1.The binaries with (windows) (linux) (macos) has included Java in it. It runs standalone. (Not need Java installed)
 
-2.By downloading `Dicebot(with Java installed on system).zip`, you must install Java (JRE) or JDK on your operertaing system.
+2.By downloading ` Dicebot_IF-JAVA-INSTALLED.zip`, you must install Java (JRE) or JDK on your operertaing system.
 
 
 Java (JRE) can be downloaded here:

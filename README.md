@@ -10,6 +10,8 @@ A crossplatfrom dicebot for Stake with Lua only scripts. (python script support 
 
 Bot only runs if Lua is enabled.
 
+![ImageofDicebot](https://i.imgur.com/qLdcbjo.png)
+
 #
 Made by poky1084
 

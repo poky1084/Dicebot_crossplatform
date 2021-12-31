@@ -57,6 +57,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.text.BadLocationException;
+import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.data.xy.XYDataItem;
 import org.luaj.vm2.lib.ZeroArgFunction;
 
@@ -95,6 +96,8 @@ public class main extends javax.swing.JFrame {
     List<Integer> maxwinstreak = new ArrayList<Integer>();
     List<Integer> maxlosestreak = new ArrayList<Integer>();
     List<Double> maxhighestbet = new ArrayList<Double>();
+    List<Double> totalprofit = new ArrayList<Double>();
+    //List<Double> lowesttotal = new ArrayList<Double>();
 
     Integer startDate = (int) System.currentTimeMillis();
     Integer start_epos = (int) System.currentTimeMillis();
@@ -135,13 +138,13 @@ public class main extends javax.swing.JFrame {
         xAxis.setFixedAutoRange(0);
         //xAxis.setAutoRange(true);
         //xAxis.setAutoRange(true);
-        NumberAxis yAxis = new NumberAxis("");
+        yAxis = new NumberAxis("");
         yAxis.setAutoRangeIncludesZero(true);
 
         DecimalFormat format = new DecimalFormat("#.########");
         yAxis.setNumberFormatOverride(format);
         //yAxis.setTickUnit(new NumberTickUnit(2));
-        //yAxis.setAutoRange(true);
+        yAxis.setAutoRange(false);
         //xAxis.setLowerMargin(0);
         //xAxis.setLowerBound(0);
         XYSplineRenderer renderer1 = new XYSplineRenderer();
@@ -1385,8 +1388,20 @@ public class main extends javax.swing.JFrame {
                     maxhighestbet.add(0.000000);
                     maxhighestbet.add(amount);
                     
-
-
+                    totalprofit.add(0.000000);
+                    totalprofit.add(profit);
+                    try {
+                        Double highesttotal = Collections.max(totalprofit);
+                        Double lowesttotal = Collections.min(totalprofit);
+                        totalprofit.clear();
+                        totalprofit.add(lowesttotal);
+                        totalprofit.add(highesttotal);
+                        yAxis.setRange(lowesttotal, highesttotal);
+                        //yAxis.setRangeWithMargins(lowesttotal, highesttotal);
+ 
+                    } catch (Exception e) {
+                        //System.out.println(e);
+                    }
                     var_wagered += amount;
                     var_previousbet = amount;
                     lastBet.Roll = current_result;
@@ -1433,7 +1448,7 @@ public class main extends javax.swing.JFrame {
                         xAxis.setFixedAutoRange(bets);
                     }
   
-
+                    //yAxis.setRange(0, 0);
  
 
                     XYDataItem item = new XYDataItem(bets, profit);
@@ -1601,6 +1616,8 @@ public class main extends javax.swing.JFrame {
             }
         });
     }
+
+    private NumberAxis yAxis;
     private NumberAxis xAxis;
     private RSyntaxTextArea jEditorLua;
     private RSyntaxTextArea jEditorPython;
